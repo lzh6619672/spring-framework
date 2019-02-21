@@ -515,11 +515,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			// 刷新时的准备工作
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 通知子类刷新内部的beanfactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
+			// 准备bean工厂供上下文使用
 			// Prepare the bean factory for use in this context.
 			prepareBeanFactory(beanFactory);
 
@@ -528,18 +531,23 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				// 反射执行beanfactory后置执行器，实现BeanFactoryPostProcessor接口
 				invokeBeanFactoryPostProcessors(beanFactory);
 
+				// 注册bean创建后执行器
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 初始化消息源，国际化操作
 				initMessageSource();
 
+				//初始化应用事件多路广播
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//初始化其他特殊的bean在指定的子类上下文环境中
 				onRefresh();
 
 				// Check for listener beans and register them.
@@ -582,6 +590,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareRefresh() {
 		// Switch to active.
+		// 切换到开启状态
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
@@ -595,14 +604,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 
+		//初始化上下文环境中的属性源
 		// Initialize any placeholder property sources in the context environment.
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		// 校验必须的属性
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
+		// 储存在刷新前的应用监听器
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
@@ -874,6 +886,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		// 初始化所有非lazy的单例对象
 		beanFactory.preInstantiateSingletons();
 	}
 
